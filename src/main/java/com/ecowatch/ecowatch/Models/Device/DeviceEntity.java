@@ -30,6 +30,7 @@ public class DeviceEntity {
     private int usage_frequency;
     private double voltage;
     private double watts;
+    private double cost;
 
     @ManyToOne
     @JoinColumn(name = "added_by", nullable = false)
