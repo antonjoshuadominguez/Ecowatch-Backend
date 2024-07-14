@@ -1,5 +1,7 @@
 package com.ecowatch.ecowatch.Models.Consumption;
 
+import java.time.LocalDateTime;
+
 import com.ecowatch.ecowatch.Models.Device.DeviceEntity;
 
 import jakarta.persistence.Entity;
@@ -23,10 +25,21 @@ import lombok.Setter;
 public class ConsumptionEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int usage_frequency;
-    private double cost;
+    private long id;
 
     @ManyToOne
     @JoinColumn(name = "device", nullable = false)
     private DeviceEntity device;
+
+    private int usage_frequency;
+    private double cost;
+    private LocalDateTime timestamp;
+
+    public ConsumptionEntity(int usage_frequency, double cost, LocalDateTime timestamp, DeviceEntity device) {
+        this.usage_frequency = usage_frequency;
+        this.cost = cost;
+        this.timestamp = timestamp;
+        this.device = device;
+    }
+    
 }
