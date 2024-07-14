@@ -27,22 +27,10 @@ public class DeviceEntity {
     private String device_name;
     private DeviceType type;
     private Date installation_date;
-    private int usage_frequency;
     private double voltage;
     private double watts;
-    private double cost;
 
     @ManyToOne
     @JoinColumn(name = "added_by", nullable = false)
     private UserEntity added_by;
-    @Override
-    public String toString() {
-        ObjectWriter writer = (new ObjectMapper()).writerWithDefaultPrettyPrinter();
-        try {
-            return writer.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return e.getMessage();
-        }
-    }
 }
