@@ -10,6 +10,11 @@ import com.ecowatch.ecowatch.Models.Dto.RegisterDto;
 import com.ecowatch.ecowatch.Models.User.UserEntity;
 import com.ecowatch.ecowatch.Service.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
 @RestController
 @CrossOrigin
 public class UserController {
@@ -21,8 +26,11 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @Operation(summary = "Register a new user")
+    @ApiResponse(responseCode = "200", description = "User registered successfully",
+                     content = @Content(schema = @Schema(implementation = UserEntity.class)))
     @PostMapping("/api/user")
-    public ResponseEntity<UserEntity> registerUser(RegisterDto newUser) {
+    public ResponseEntity<?> registerUser(@RequestBody RegisterDto newUser) {
         return userService.register(newUser);
     }
 }
