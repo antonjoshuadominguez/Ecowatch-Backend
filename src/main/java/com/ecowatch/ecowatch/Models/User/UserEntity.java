@@ -29,16 +29,6 @@ public class UserEntity {
         this.email = email;
         this.password = password;
     }
-    @Override
-    public String toString() {
-        ObjectWriter writer = (new ObjectMapper()).writerWithDefaultPrettyPrinter();
-        try {
-            return writer.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return e.getMessage();
-        }
-    }
    
     
 }
