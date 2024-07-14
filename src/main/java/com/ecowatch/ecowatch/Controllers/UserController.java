@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.ecowatch.ecowatch.Models.Dto.RegisterDto;
+import com.ecowatch.ecowatch.Models.Dto.RegisterUserDto;
 import com.ecowatch.ecowatch.Models.User.UserEntity;
 import com.ecowatch.ecowatch.Service.UserService;
 
@@ -30,7 +30,7 @@ public class UserController {
     @Operation(summary = "Register a new user")
     @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserEntity.class)))
     @PostMapping
-    public ResponseEntity<?> registerUser(@RequestBody RegisterDto newUser) {
+    public ResponseEntity<?> registerUser(@RequestBody RegisterUserDto newUser) {
         return userService.register(newUser);
     }
 }

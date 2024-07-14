@@ -20,8 +20,8 @@ public class ConsumptionService {
     @Autowired
     private ConsumptionRepo consumptionRepo;
     public ResponseEntity<?> addConsumption() {
-        ConsumptionEntity entity = new ConsumptionEntity(2, 2, LocalDateTime.now(ZoneId.of("Asia/Manila")) , null);
-        consumptionRepo.save(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(entity);
+        // ConsumptionEntity entity = new ConsumptionEntity(2, 2, LocalDateTime.now(ZoneId.of("Asia/Manila")) , null);
+        // consumptionRepo.save(entity);
+        return ResponseEntity.status(HttpStatus.CREATED).body(null);
     }
 }

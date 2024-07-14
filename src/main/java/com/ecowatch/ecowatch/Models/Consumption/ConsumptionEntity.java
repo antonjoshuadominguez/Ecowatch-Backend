@@ -31,15 +31,19 @@ public class ConsumptionEntity {
     @JoinColumn(name = "device", nullable = false)
     private DeviceEntity device;
 
-    private int usage_frequency;
+    private double usageFrequency;
     private double cost;
-    private LocalDateTime timestamp;
-
-    public ConsumptionEntity(int usage_frequency, double cost, LocalDateTime timestamp, DeviceEntity device) {
-        this.usage_frequency = usage_frequency;
-        this.cost = cost;
-        this.timestamp = timestamp;
+    private LocalDateTime deviceIsOn;
+    private LocalDateTime deviceIsOff;
+    public ConsumptionEntity(DeviceEntity device, double usageFrequency, double cost, LocalDateTime deviceIsOn,
+            LocalDateTime deviceIsOff) {
         this.device = device;
+        this.usageFrequency = usageFrequency;
+        this.cost = cost;
+        this.deviceIsOn = deviceIsOn;
+        this.deviceIsOff = deviceIsOff;
     }
+
+    
     
 }

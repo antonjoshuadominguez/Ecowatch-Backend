@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import com.ecowatch.ecowatch.Models.Dto.RegisterDto;
+import com.ecowatch.ecowatch.Models.Dto.RegisterUserDto;
 import com.ecowatch.ecowatch.Models.User.UserEntity;
 import com.ecowatch.ecowatch.Models.User.UserRepo;
 
@@ -17,8 +17,7 @@ public class UserService {
     @Autowired
     public UserRepo userRepo;
 
-
-    public ResponseEntity<?> register(RegisterDto newUser) {
+    public ResponseEntity<?> register(RegisterUserDto newUser) {
         UserEntity newUserEntity = new UserEntity(newUser.getFirstname(), newUser.getLastname(), newUser.getEmail(), newUser.getPassword());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         newUserEntity.setPassword(encoder.encode(newUserEntity.getPassword()));

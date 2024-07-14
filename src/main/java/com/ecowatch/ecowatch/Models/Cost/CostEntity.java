@@ -17,5 +17,5 @@ public class CostEntity {
     private String type;
     private String currency;
     private double amount;
-    private LocalDate date_added;
+    private LocalDate dateAdded;
 }
