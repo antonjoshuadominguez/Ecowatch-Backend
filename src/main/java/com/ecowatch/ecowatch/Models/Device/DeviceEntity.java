@@ -1,12 +1,11 @@
 package com.ecowatch.ecowatch.Models.Device;
 
 import java.util.Date;
+import java.util.Set;
 
+import com.ecowatch.ecowatch.Models.Consumption.ConsumptionEntity;
 import com.ecowatch.ecowatch.Models.Enums.DeviceType;
 import com.ecowatch.ecowatch.Models.User.UserEntity;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -29,8 +28,12 @@ public class DeviceEntity {
     private Date installation_date;
     private double voltage;
     private double watts;
+    private boolean isOn;
 
     @ManyToOne
     @JoinColumn(name = "added_by", nullable = false)
     private UserEntity added_by;
+
+    @OneToMany(mappedBy = "device")
+    private Set<ConsumptionEntity> consumption_history;
 }
