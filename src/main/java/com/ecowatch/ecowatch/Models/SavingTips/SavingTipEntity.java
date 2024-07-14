@@ -20,14 +20,4 @@ public class SavingTipEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String tip;
-    @Override
-    public String toString() {
-        ObjectWriter writer = (new ObjectMapper()).writerWithDefaultPrettyPrinter();
-        try {
-            return writer.writeValueAsString(this);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return e.getMessage();
-        }
-    }
 }
