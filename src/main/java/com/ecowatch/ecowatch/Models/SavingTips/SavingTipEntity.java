@@ -1,8 +1,5 @@
 package com.ecowatch.ecowatch.Models.SavingTips;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -17,19 +17,19 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
 @CrossOrigin
+@RequestMapping("/api/user")
 public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/api/user/all")
+    @GetMapping("/all")
     public List<UserEntity> getAllUsers() {
         return userService.getAllUsers();
     }
 
     @Operation(summary = "Register a new user")
-    @ApiResponse(responseCode = "200", description = "User registered successfully",
-                     content = @Content(schema = @Schema(implementation = UserEntity.class)))
-    @PostMapping("/api/user")
+    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserEntity.class)))
+    @PostMapping
     public ResponseEntity<?> registerUser(@RequestBody RegisterDto newUser) {
         return userService.register(newUser);
     }
