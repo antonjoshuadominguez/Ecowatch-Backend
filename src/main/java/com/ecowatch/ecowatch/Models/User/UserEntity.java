@@ -1,5 +1,10 @@
 package com.ecowatch.ecowatch.Models.User;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,12 +21,23 @@ public class UserEntity {
     private String firstname;   
     private String lastname;
     private String email;
+    @JsonIgnore
     private String password;
     public UserEntity(String firstname, String lastname, String email, String password) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
+    }
+    @Override
+    public String toString() {
+        ObjectWriter writer = (new ObjectMapper()).writerWithDefaultPrettyPrinter();
+        try {
+            return writer.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return e.getMessage();
+        }
     }
    
     
