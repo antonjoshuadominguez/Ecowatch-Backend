@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 
 import com.ecowatch.ecowatch.Models.Dto.RegisterElectricDeviceDto;
@@ -42,8 +41,14 @@ public class DeviceController {
     }
 
     @Operation(summary = "Get all devices")
-    @GetMapping()
+    @GetMapping("/all")
     public ResponseEntity<?> getAllDevices(@RequestParam(required = false) DeviceType type) {
         return deviceService.getAllDevices(type);
+    }
+
+    @Operation(summary = "Get a device by device ID")
+    @GetMapping("/{deviceId}")
+    public ResponseEntity<?> getDevice(@RequestParam(required = true) Long deviceId) {
+        return deviceService.getDevice(deviceId);
     }
 }

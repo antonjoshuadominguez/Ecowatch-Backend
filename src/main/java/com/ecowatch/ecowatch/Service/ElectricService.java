@@ -35,7 +35,7 @@ public class ElectricService {
         int k = 1;
         for(int i = 1; i <= quantity; i++) {
             RegisterElectricDeviceDto copy = new RegisterElectricDeviceDto(electricDevice);
-            while(deviceRepo.findByDeviceNameAndType(copy.getDevice_name(), DeviceType.Electrical) != null) {
+            while(deviceRepo.findByDeviceNameAndType(copy.getDevice_name(), DeviceType.Electric) != null) {
                 copy.setDevice_name(electricDevice.getDevice_name() + "_" + k);
                 k++;
             }

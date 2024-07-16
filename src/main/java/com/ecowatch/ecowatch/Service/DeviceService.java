@@ -34,7 +34,7 @@ public class DeviceService {
     private ElectricRepo electricRepo;
 
     public DeviceEntity addNewDevice(RegisterDeviceDto newDevice) {
-        DeviceType type = (newDevice instanceof RegisterWaterDeviceDto) ? DeviceType.Water : DeviceType.Electrical;
+        DeviceType type = (newDevice instanceof RegisterWaterDeviceDto) ? DeviceType.Water : DeviceType.Electric;
         if(deviceRepo.findByDeviceNameAndType(newDevice.getDevice_name(), type) == null) {
             deviceRepo.save(registerDtoToEntity(newDevice));
             return deviceRepo.findByDeviceNameAndType(newDevice.getDevice_name(), type);
@@ -43,7 +43,7 @@ public class DeviceService {
     }
 
     public DeviceEntity registerDtoToEntity(RegisterDeviceDto dto) {
-        DeviceType type = (dto instanceof RegisterWaterDeviceDto) ? DeviceType.Water : DeviceType.Electrical;
+        DeviceType type = (dto instanceof RegisterWaterDeviceDto) ? DeviceType.Water : DeviceType.Electric;
         return new DeviceEntity(
             dto.getDevice_name(), 
             type, 
@@ -60,7 +60,7 @@ public class DeviceService {
             List<WaterEntity> waterDevices = waterRepo.findAll();
             response.addAll(waterDevices);
         }
-        if(typeIsNull ||type.equals(DeviceType.Electrical)) {
+        if(typeIsNull ||type.equals(DeviceType.Electric)) {
             List<ElectricEntity> electricDevices = electricRepo.findAll();
             response.addAll(electricDevices);
         }
@@ -70,4 +70,13 @@ public class DeviceService {
         return ResponseEntity.ok(response);
     }
 
+    public ResponseEntity<?> getDevice(Long deviceId) {
+        DeviceEntity deviceEntity = (deviceRepo.existsById(deviceId)) ? deviceRepo.findById(deviceId).get() : null;
+        if(deviceEntity == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid device ID. No device found");
+        } 
+        DeviceType type = deviceEntity.getType();
+        return (type.equals(DeviceType.Water)) ? ResponseEntity.ok(waterRepo.findById(deviceId)) 
+            : ResponseEntity.ok(electricRepo.findById(deviceId));       
+    }
 }

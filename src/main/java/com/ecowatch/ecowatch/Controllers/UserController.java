@@ -22,6 +22,7 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Operation(summary = "Get all users")
     @GetMapping("/all")
     public List<UserEntity> getAllUsers() {
         return userService.getAllUsers();
