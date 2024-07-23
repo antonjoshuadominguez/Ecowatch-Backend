@@ -1,13 +1,16 @@
 package com.ecowatch.ecowatch.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -92,20 +95,38 @@ public class DeviceService {
         }
         ConsumptionEntity consumption = consumptionService.addConsumption(device);
         device.setDeviceOn(true);
+        deviceRepo.save(device);
         return ResponseEntity.ok(consumption);
     }
 
     public ResponseEntity<?> turnOffDevice(long deviceId) {
-        ResponseEntity<?> deviceResponse = getDevice(deviceId);
-        Object deviceObj = null;
-        if (deviceResponse.getStatusCode().is2xxSuccessful()) {
-            DeviceType type = deviceRepo.findById(deviceId).get().getType();    
-            if (type.equals(DeviceType.Water)) {
-                deviceObj = (WaterEntity) deviceResponse.getBody();
-            } else if (type.equals(DeviceType.Electric)) {
-                deviceObj = (ElectricEntity) deviceResponse.getBody();
+        DeviceEntity device = deviceRepo.findById(deviceId).get();
+        if(!device.isDeviceOn()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Device is not turned on.");
+        }
+        double unit = 0.0;
+        if(device.getType().equals(DeviceType.Electric)) {
+            ElectricEntity electric = electricRepo.findById(device.getDeviceId()).get();
+            unit = electric.getWatts();
+        } else {
+            WaterEntity water = waterRepo.findById(device.getDeviceId()).get();
+            unit = water.getFlow_rate();
+        }
+        ConsumptionEntity consumption = null;
+        List<ConsumptionEntity> consumptionHistory = device.getConsumption_history();
+        for (ConsumptionEntity consumptionEntity : consumptionHistory) {
+            if(consumptionEntity.getDeviceIsOff()==null) {
+                consumption = consumptionEntity;
+                break;
             }
         }
-        return ResponseEntity.ok("I have run");
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Manila"));
+        consumption.setDeviceIsOff(now);
+        Duration duration = Duration.between(consumption.getDeviceIsOn(), now);
+        double hours = duration.toSeconds() / 3600.0;
+        consumption.setUsageFrequency(hours * unit);
+        device.setDeviceOn(false);
+        deviceRepo.save(device);
+        return ResponseEntity.ok(consumption);
     }
 }
