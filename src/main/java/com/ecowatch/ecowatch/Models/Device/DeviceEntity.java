@@ -5,6 +5,7 @@ import java.util.*;
 import com.ecowatch.ecowatch.Models.Consumption.ConsumptionEntity;
 import com.ecowatch.ecowatch.Models.Enums.DeviceType;
 import com.ecowatch.ecowatch.Models.User.UserEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,11 +27,12 @@ public class DeviceEntity {
     private DeviceType type;
     private Date installationDate;
     private boolean isDeviceOn;
-
+    
     @ManyToOne
     @JoinColumn(name = "added_by", nullable = false)
     private UserEntity added_by;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "device")
     private List<ConsumptionEntity> consumption_history;
 

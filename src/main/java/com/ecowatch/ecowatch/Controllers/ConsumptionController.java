@@ -19,10 +19,10 @@ public class ConsumptionController {
     @Autowired
     private ConsumptionService consumptionService;
 
-    @PostMapping
-    @Operation(summary = "Add a consumption record")
-    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ConsumptionEntity.class)))
-    public ResponseEntity<?> addConsumption() {
-        return consumptionService.addConsumption();
-    }
+    // @PostMapping
+    // @Operation(summary = "Add a consumption record")
+    // @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ConsumptionEntity.class)))
+    // public ResponseEntity<?> addConsumption() {
+    //     return consumptionService.addConsumption();
+    // }
 }

@@ -32,14 +32,12 @@ public class ConsumptionEntity {
     private DeviceEntity device;
 
     private double usageFrequency;
-    private double cost;
     private LocalDateTime deviceIsOn;
     private LocalDateTime deviceIsOff;
-    public ConsumptionEntity(DeviceEntity device, double usageFrequency, double cost, LocalDateTime deviceIsOn,
+    public ConsumptionEntity(DeviceEntity device, double usageFrequency, LocalDateTime deviceIsOn,
             LocalDateTime deviceIsOff) {
         this.device = device;
         this.usageFrequency = usageFrequency;
-        this.cost = cost;
         this.deviceIsOn = deviceIsOn;
         this.deviceIsOff = deviceIsOff;
     }

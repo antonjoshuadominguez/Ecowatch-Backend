@@ -1,6 +1,7 @@
 package com.ecowatch.ecowatch.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,9 +9,11 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.ecowatch.ecowatch.Models.Consumption.ConsumptionEntity;
 import com.ecowatch.ecowatch.Models.Device.DeviceEntity;
 import com.ecowatch.ecowatch.Models.Device.DeviceRepo;
 import com.ecowatch.ecowatch.Models.Dto.RegisterDeviceDto;
@@ -32,6 +35,8 @@ public class DeviceService {
     private WaterRepo waterRepo;
     @Autowired
     private ElectricRepo electricRepo;
+    @Autowired
+    private ConsumptionService consumptionService;
 
     public DeviceEntity addNewDevice(RegisterDeviceDto newDevice) {
         DeviceType type = (newDevice instanceof RegisterWaterDeviceDto) ? DeviceType.Water : DeviceType.Electric;
@@ -78,5 +83,28 @@ public class DeviceService {
         DeviceType type = deviceEntity.getType();
         return (type.equals(DeviceType.Water)) ? ResponseEntity.ok(waterRepo.findById(deviceId)) 
             : ResponseEntity.ok(electricRepo.findById(deviceId));       
+    }
+
+    public ResponseEntity<?> turnOnDevice(long deviceId) {
+        DeviceEntity device = deviceRepo.findById(deviceId).get();
+        if(device == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid device ID. No device found");
+        }
+        ConsumptionEntity consumption = consumptionService.addConsumption(device);
+        return ResponseEntity.ok(consumption);
+    }
+
+    public ResponseEntity<?> turnOffDevice(long deviceId) {
+        ResponseEntity<?> deviceResponse = getDevice(deviceId);
+        Object deviceObj = null;
+        if (deviceResponse.getStatusCode().is2xxSuccessful()) {
+            DeviceType type = deviceRepo.findById(deviceId).get().getType();    
+            if (type.equals(DeviceType.Water)) {
+                deviceObj = (WaterEntity) deviceResponse.getBody();
+            } else if (type.equals(DeviceType.Electric)) {
+                deviceObj = (ElectricEntity) deviceResponse.getBody();
+            }
+        }
+        return ResponseEntity.ok("I have run");
     }
 }

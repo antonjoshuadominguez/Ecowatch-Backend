@@ -51,4 +51,10 @@ public class DeviceController {
     public ResponseEntity<?> getDevice(@RequestParam(required = true) Long deviceId) {
         return deviceService.getDevice(deviceId);
     }
+
+    @Operation(summary = "Turn on a device by device ID")
+    @PostMapping("/{deviceId}/on")
+    public ResponseEntity<?> turnOnDevice(@RequestParam(required = true) Long deviceId) {
+        return deviceService.turnOnDevice(deviceId);
+    }
 }
