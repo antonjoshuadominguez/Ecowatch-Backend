@@ -91,6 +91,7 @@ public class DeviceService {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid device ID. No device found");
         }
         ConsumptionEntity consumption = consumptionService.addConsumption(device);
+        device.setDeviceOn(true);
         return ResponseEntity.ok(consumption);
     }
 
