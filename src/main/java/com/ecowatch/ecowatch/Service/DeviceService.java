@@ -4,15 +4,12 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -89,9 +86,12 @@ public class DeviceService {
     }
 
     public ResponseEntity<?> turnOnDevice(long deviceId) {
-        DeviceEntity device = deviceRepo.findById(deviceId).get();
-        if(device == null) {
+        if(!deviceRepo.existsById(deviceId)){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid device ID. No device found");
+        }
+        DeviceEntity device = deviceRepo.findById(deviceId).get();
+        if(device.isDeviceOn()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Device is already turned on.");
         }
         ConsumptionEntity consumption = consumptionService.addConsumption(device);
         device.setDeviceOn(true);
@@ -100,10 +100,10 @@ public class DeviceService {
     }
 
     public ResponseEntity<?> turnOffDevice(long deviceId) {
-        DeviceEntity device = deviceRepo.findById(deviceId).get();
-        if(!device.isDeviceOn()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Device is not turned on.");
+        if(!deviceRepo.existsById(deviceId)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid device ID. No device found");
         }
+        DeviceEntity device = deviceRepo.findById(deviceId).get();
         double unit = 0.0;
         if(device.getType().equals(DeviceType.Electric)) {
             ElectricEntity electric = electricRepo.findById(device.getDeviceId()).get();
@@ -124,9 +124,19 @@ public class DeviceService {
         consumption.setDeviceIsOff(now);
         Duration duration = Duration.between(consumption.getDeviceIsOn(), now);
         double hours = duration.toSeconds() / 3600.0;
-        consumption.setUsageFrequency(hours * unit);
+        consumption.setUsageInHrs(hours);
+        consumption.setUsage(hours * unit);
         device.setDeviceOn(false);
         deviceRepo.save(device);
         return ResponseEntity.ok(consumption);
+    }
+
+    public ResponseEntity<String> deleteDevice(long deviceId) {
+        if(!deviceRepo.existsById(deviceId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid device ID. No device found");
+        }
+        DeviceEntity device = deviceRepo.findById(deviceId).get();
+        deviceRepo.delete(device);
+        return ResponseEntity.ok("Successfully deleted: \n" + device.toString());
     }
 }

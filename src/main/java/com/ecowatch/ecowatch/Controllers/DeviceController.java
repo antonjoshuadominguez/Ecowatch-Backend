@@ -59,8 +59,14 @@ public class DeviceController {
     }
 
     @Operation(summary = "Turn off a device by device ID")
-    @PostMapping("/{deviceId}/off")
+    @PatchMapping("/{deviceId}/off")
     public ResponseEntity<?> turnOffDevice(@RequestParam(required = true) Long deviceId) {
         return deviceService.turnOffDevice(deviceId);
+    }
+
+    @Operation(summary = "Delete a device permanently")
+    @DeleteMapping("/delete/{deviceId}")
+    public ResponseEntity<String> deleteDevice(@RequestParam(required = true) Long deviceId) {
+        return deviceService.deleteDevice(deviceId);
     }
 }

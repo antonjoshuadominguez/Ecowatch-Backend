@@ -6,7 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.ecowatch.ecowatch.Models.Dto.ChangePasswordDto;
 import com.ecowatch.ecowatch.Models.Dto.RegisterUserDto;
+import com.ecowatch.ecowatch.Models.Dto.ResetPasswordDto;
+import com.ecowatch.ecowatch.Models.Dto.UpdateUserDto;
 import com.ecowatch.ecowatch.Models.User.UserEntity;
 import com.ecowatch.ecowatch.Service.UserService;
 
@@ -22,10 +25,29 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Operation(summary = "Get all users")
-    @GetMapping("/all")
-    public List<UserEntity> getAllUsers() {
-        return userService.getAllUsers();
+    @Operation(summary = "Request to forget password")
+    @PostMapping("/forget-password")
+    public ResponseEntity<String> forgetPassword(@RequestBody String email) {
+        return userService.forgetPassword(email);
+    }
+
+    @Operation(summary = "Reset password with OTP")
+    @PatchMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDto reset) {
+        return userService.resetPassword(reset.getEmail(), reset.getOtp(), reset.getNewPassword());
+    }
+
+    @Operation(summary = "Update user information")
+    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserEntity.class)))
+    @PutMapping("/update-user")
+    public ResponseEntity<?> updateUser(@RequestBody UpdateUserDto updatedInfo) {
+        return userService.updateUser(updatedInfo);
+    }
+
+    @Operation(summary = "Change user password")
+    @PatchMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordDto changePass) {
+        return userService.changePassword(changePass.getEmail(), changePass.getOldPassword(), changePass.getNewPassword());
     }
 
     @Operation(summary = "Register a new user")
@@ -34,4 +56,11 @@ public class UserController {
     public ResponseEntity<?> registerUser(@RequestBody RegisterUserDto newUser) {
         return userService.register(newUser);
     }
+
+    @Operation(summary = "Get all users")
+    @GetMapping("/all")
+    public List<UserEntity> getAllUsers() {
+        return userService.getAllUsers();
+    }
+
 }

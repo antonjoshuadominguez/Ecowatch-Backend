@@ -31,17 +31,19 @@ public class ConsumptionEntity {
     @JoinColumn(name = "device", nullable = false)
     private DeviceEntity device;
 
-    private double usageFrequency;
+    private double usage;
+    private double usageInHrs;
     private LocalDateTime deviceIsOn;
     private LocalDateTime deviceIsOff;
-    public ConsumptionEntity(DeviceEntity device, double usageFrequency, LocalDateTime deviceIsOn,
+    public ConsumptionEntity(DeviceEntity device, double usage, double usageInHrs, LocalDateTime deviceIsOn,
             LocalDateTime deviceIsOff) {
         this.device = device;
-        this.usageFrequency = usageFrequency;
+        this.usage = usage;
+        this.usageInHrs = usageInHrs;
         this.deviceIsOn = deviceIsOn;
         this.deviceIsOff = deviceIsOff;
     }
-
+    
     
     
 }

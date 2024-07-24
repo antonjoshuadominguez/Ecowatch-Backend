@@ -1,5 +1,7 @@
 package com.ecowatch.ecowatch.Controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -8,9 +10,6 @@ import com.ecowatch.ecowatch.Models.Consumption.ConsumptionEntity;
 import com.ecowatch.ecowatch.Service.ConsumptionService;
 
 import io.swagger.v3.oas.annotations.*;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
 @CrossOrigin
@@ -19,10 +18,16 @@ public class ConsumptionController {
     @Autowired
     private ConsumptionService consumptionService;
 
-    // @PostMapping
-    // @Operation(summary = "Add a consumption record")
-    // @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ConsumptionEntity.class)))
-    // public ResponseEntity<?> addConsumption() {
-    //     return consumptionService.addConsumption();
-    // }
+    @Operation(summary = "Get all consumption history")
+    @GetMapping
+    public ResponseEntity<List<ConsumptionEntity>> getConsumptionHistory() {
+        return ResponseEntity.ok(consumptionService.getAllConsumption());
+    }
+   
+    @Operation(summary = "Get device consumption history")
+    @GetMapping("/{deviceId}")
+    public ResponseEntity<List<ConsumptionEntity>> getDeviceConsumptionHistory(@RequestParam long deviceId) {
+        return ResponseEntity.ok(consumptionService.getConsumptionByDevice(deviceId));
+    }
+
 }
