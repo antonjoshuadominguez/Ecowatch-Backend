@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.ecowatch.ecowatch.Models.Consumption.ConsumptionEntity;
+import com.ecowatch.ecowatch.Models.Enums.DeviceType;
 import com.ecowatch.ecowatch.Service.ConsumptionService;
 
 import io.swagger.v3.oas.annotations.*;
@@ -30,4 +31,9 @@ public class ConsumptionController {
         return ResponseEntity.ok(consumptionService.getConsumptionByDevice(deviceId));
     }
 
+    @Operation(summary = "Get total consumption by type")
+    @GetMapping("/total/{type}")
+    public ResponseEntity<Double> getTotalConsumption(@RequestParam(required = true) DeviceType type) {
+        return ResponseEntity.ok(consumptionService.getTotalConsumption(type));
+    }
 }

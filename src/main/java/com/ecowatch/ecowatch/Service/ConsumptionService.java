@@ -11,6 +11,7 @@ import com.ecowatch.ecowatch.Models.Consumption.ConsumptionEntity;
 import com.ecowatch.ecowatch.Models.Consumption.ConsumptionRepo;
 import com.ecowatch.ecowatch.Models.Device.DeviceEntity;
 import com.ecowatch.ecowatch.Models.Device.DeviceRepo;
+import com.ecowatch.ecowatch.Models.Enums.DeviceType;
 
 @Service
 public class ConsumptionService {
@@ -30,5 +31,14 @@ public class ConsumptionService {
     public List<ConsumptionEntity> getConsumptionByDevice(long deviceId) {
         DeviceEntity device = deviceRepo.findById(deviceId).get();
         return device.getConsumption_history(); 
+    }
+
+    public double getTotalConsumption(DeviceType type) {
+        List<ConsumptionEntity> electricConsumption = consumptionRepo.findByDevice_Type(type);
+        double total = 0.0;
+        for (ConsumptionEntity consumptionEntity : electricConsumption) {
+            total = consumptionEntity.getUsage();
+        }
+        return total;
     }
 }
