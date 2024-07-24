@@ -59,8 +59,13 @@ public class UserController {
 
     @Operation(summary = "Get all users")
     @GetMapping("/all")
-    public List<UserEntity> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<UserEntity>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
+    @Operation(summary = "Delete a user permanently")
+    @DeleteMapping("/delete/{userId}")
+    public ResponseEntity<String> deleteUser(@RequestParam(required = true) long userId) {
+        return userService.deleteUser(userId);
+    }
 }

@@ -97,5 +97,12 @@ public class UserService {
         return ResponseEntity.ok("Successfully changed password");
     }
 
-    
+    public ResponseEntity<String> deleteUser(Long userId) {
+        if(!userRepo.existsById(userId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid user ID. No account is associated with this user ID");
+        }
+        UserEntity user = userRepo.findById(userId).get();
+        userRepo.delete(user);
+        return ResponseEntity.ok("Successfully deleted: " + user.getEmail());
+    }
 }
