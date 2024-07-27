@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.ecowatch.ecowatch.Models.Dto.ChangePasswordDto;
+import com.ecowatch.ecowatch.Models.Dto.LoginDto;
 import com.ecowatch.ecowatch.Models.Dto.RegisterUserDto;
 import com.ecowatch.ecowatch.Models.Dto.ResetPasswordDto;
 import com.ecowatch.ecowatch.Models.Dto.UpdateUserDto;
@@ -57,10 +58,23 @@ public class UserController {
         return userService.register(newUser);
     }
 
+    @Operation(summary = "Login")
+    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = UserEntity.class)))
+    @PostMapping("/login")
+    public ResponseEntity<?> loginUser(@RequestBody LoginDto login) {
+        return userService.login(login);
+    }
+
     @Operation(summary = "Get all users")
     @GetMapping("/all")
     public ResponseEntity<List<UserEntity>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
+    }
+
+    @Operation(summary = "Get a user by user ID")
+    @GetMapping("/get/{userId}")
+    public ResponseEntity<?> getUser(long userId) {
+        return userService.getUserById(userId);
     }
 
     @Operation(summary = "Delete a user permanently")

@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.ecowatch.ecowatch.Models.Dto.LoginDto;
 import com.ecowatch.ecowatch.Models.Dto.RegisterUserDto;
 import com.ecowatch.ecowatch.Models.Dto.UpdateUserDto;
 import com.ecowatch.ecowatch.Models.User.UserEntity;
@@ -37,6 +38,25 @@ public class UserService {
 
     public List<UserEntity> getAllUsers() {
         return userRepo.findAll();
+    }
+
+    public ResponseEntity<?> getUserById(long id) {
+        if(!userRepo.existsById(id)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid User ID. No user found");
+        }
+        return ResponseEntity.ok(userRepo.findById(id).get());
+    }
+
+    public ResponseEntity<?> login(LoginDto loginCredentials) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        UserEntity user = userRepo.findByEmail(loginCredentials.getEmail());
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid email. No user record is associated with this email.");
+        }
+        if(!encoder.matches(loginCredentials.getPassword(), user.getPassword())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid password. Please try again.");
+        }
+        return ResponseEntity.ok(userRepo.findById(user.getUserId()).get());
     }
 
     public String generateOTP() {
