@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ecowatch.ecowatch.Models.Device.DeviceEntity;
 import com.ecowatch.ecowatch.Models.Device.DeviceRepo;
+import com.ecowatch.ecowatch.Models.Dto.EditWaterDeviceDto;
 import com.ecowatch.ecowatch.Models.Dto.RegisterWaterDeviceDto;
 import com.ecowatch.ecowatch.Models.Enums.DeviceType;
 import com.ecowatch.ecowatch.Models.Water.WaterEntity;
@@ -45,6 +48,22 @@ public class WaterService {
             waterRepo.save(waterEntity);
         }
         return devices;
+    }
+
+    public ResponseEntity<?> editWaterDevice(long deviceId, EditWaterDeviceDto waterDevice) {
+        if(!deviceRepo.existsById(deviceId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid device ID. No device record is found.");
+        }
+        DeviceEntity device = deviceRepo.findById(deviceId).get();
+        if(deviceRepo.findByDeviceNameAndType(waterDevice.getDevice_name(), DeviceType.Water) != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Device Name Edit Conflict. There is an existing device with this name.");
+        }
+        device.setDeviceName(waterDevice.getDevice_name());
+        WaterEntity wDevice = waterRepo.findById(deviceId).get();
+        wDevice.setFlow_rate(waterDevice.getFlow_rate());
+        deviceRepo.save(device);
+        waterRepo.save(wDevice);
+        return ResponseEntity.ok(wDevice);
     }
 
     private WaterEntity registerDtoToEntity(RegisterWaterDeviceDto dto, DeviceEntity device) {

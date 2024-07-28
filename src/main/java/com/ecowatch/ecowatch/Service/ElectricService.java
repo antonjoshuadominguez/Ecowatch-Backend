@@ -4,14 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.ecowatch.ecowatch.Models.Device.DeviceEntity;
 import com.ecowatch.ecowatch.Models.Device.DeviceRepo;
+import com.ecowatch.ecowatch.Models.Dto.EditElectricDeviceDto;
+import com.ecowatch.ecowatch.Models.Dto.EditWaterDeviceDto;
 import com.ecowatch.ecowatch.Models.Dto.RegisterElectricDeviceDto;
 import com.ecowatch.ecowatch.Models.Electric.ElectricEntity;
 import com.ecowatch.ecowatch.Models.Electric.ElectricRepo;
 import com.ecowatch.ecowatch.Models.Enums.DeviceType;
+import com.ecowatch.ecowatch.Models.Water.WaterEntity;
 
 @Service
 public class ElectricService {
@@ -45,6 +50,22 @@ public class ElectricService {
             electricRepo.save(electricEntity);
         }
         return devices;
+    }
+
+    public ResponseEntity<?> editElectricDevice(long deviceId, EditElectricDeviceDto electricDevice) {
+        if(!deviceRepo.existsById(deviceId)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Invalid device ID. No device record is found.");
+        }
+        DeviceEntity device = deviceRepo.findById(deviceId).get();
+        if(deviceRepo.findByDeviceNameAndType(electricDevice.getDevice_name(), DeviceType.Electric) != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Device Name Edit Conflict. There is an existing device with this name.");
+        }
+        device.setDeviceName(electricDevice.getDevice_name());
+        ElectricEntity eDevice = electricRepo.findById(deviceId).get();
+        eDevice.setWatts(electricDevice.getWatts());
+        deviceRepo.save(device);
+        electricRepo.save(eDevice);
+        return ResponseEntity.ok(eDevice);
     }
 
     private ElectricEntity registerDtoToEntity(RegisterElectricDeviceDto dto, DeviceEntity device) {

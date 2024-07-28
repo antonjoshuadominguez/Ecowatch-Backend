@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.ecowatch.ecowatch.Models.Dto.EditElectricDeviceDto;
+import com.ecowatch.ecowatch.Models.Dto.EditWaterDeviceDto;
 import com.ecowatch.ecowatch.Models.Dto.RegisterElectricDeviceDto;
 import com.ecowatch.ecowatch.Models.Dto.RegisterWaterDeviceDto;
 import com.ecowatch.ecowatch.Models.Electric.ElectricEntity;
@@ -16,6 +18,9 @@ import com.ecowatch.ecowatch.Service.ElectricService;
 import com.ecowatch.ecowatch.Service.WaterService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @RestController
 @CrossOrigin
@@ -38,6 +43,20 @@ public class DeviceController {
     @PostMapping("/electric")
     public ResponseEntity<List<ElectricEntity>> addElectricDevice(@RequestBody RegisterElectricDeviceDto newDevice) {
         return ResponseEntity.ok(electricService.addElectricDevice(newDevice));
+    }
+
+    @Operation(summary = "Edit a water device")
+    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = WaterEntity.class)))
+    @PutMapping("/water/{deviceId}")
+    public ResponseEntity<?> editWaterDevice(@RequestParam long deviceId, @RequestBody EditWaterDeviceDto waterDevice) {
+        return ResponseEntity.ok(waterService.editWaterDevice(deviceId, waterDevice));
+    }
+
+    @Operation(summary = "Edit an electric device")
+    @ApiResponse(responseCode = "200", content = @Content(schema = @Schema(implementation = ElectricEntity.class)))
+    @PutMapping("/electric/{deviceId}")
+    public ResponseEntity<?> editElectricDevice(@RequestParam long deviceId, @RequestBody EditElectricDeviceDto elecctricDevice) {
+        return ResponseEntity.ok(electricService.editElectricDevice(deviceId, elecctricDevice));
     }
 
     @Operation(summary = "Get all devices")
