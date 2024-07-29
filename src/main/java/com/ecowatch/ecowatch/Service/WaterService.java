@@ -58,9 +58,13 @@ public class WaterService {
         if(deviceRepo.findByDeviceNameAndType(waterDevice.getDevice_name(), DeviceType.Water) != null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Device Name Edit Conflict. There is an existing device with this name.");
         }
-        device.setDeviceName(waterDevice.getDevice_name());
+        if(waterDevice.getDevice_name()!= null) {
+            device.setDeviceName(waterDevice.getDevice_name());
+        }
         WaterEntity wDevice = waterRepo.findById(deviceId).get();
-        wDevice.setFlow_rate(waterDevice.getFlow_rate());
+        if(waterDevice.getFlow_rate() != null) {
+            wDevice.setFlow_rate(waterDevice.getFlow_rate());
+        }
         deviceRepo.save(device);
         waterRepo.save(wDevice);
         return ResponseEntity.ok(wDevice);

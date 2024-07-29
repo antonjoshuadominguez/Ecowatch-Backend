@@ -11,5 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class EditElectricDeviceDto {
     private String device_name;
-    private double watts;
+    private Double watts;
 }

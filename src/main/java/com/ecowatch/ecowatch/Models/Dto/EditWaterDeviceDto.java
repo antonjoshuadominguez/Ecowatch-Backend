@@ -11,5 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class EditWaterDeviceDto {
     private String device_name;
-    private double flow_rate;
+    private Double flow_rate;
 }

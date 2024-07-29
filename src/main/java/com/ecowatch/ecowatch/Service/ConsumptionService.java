@@ -34,10 +34,10 @@ public class ConsumptionService {
     }
 
     public double getTotalConsumption(DeviceType type) {
-        List<ConsumptionEntity> electricConsumption = consumptionRepo.findByDevice_Type(type);
+        List<ConsumptionEntity> consumptionList = consumptionRepo.findByDevice_Type(type);
         double total = 0.0;
-        for (ConsumptionEntity consumptionEntity : electricConsumption) {
-            total = consumptionEntity.getUsage();
+        for (ConsumptionEntity consumptionEntity : consumptionList) {
+            total += consumptionEntity.getUsage();
         }
         return total;
     }
