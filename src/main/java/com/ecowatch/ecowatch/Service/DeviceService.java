@@ -217,7 +217,7 @@ public class DeviceService {
                 return true;
             }
         } else if(ToDate == null) {
-            if(current.after(FromDate) || current.equals(ToDate)) {
+            if(current.after(FromDate) || current.equals(FromDate)) {
                 return true;
             }
         } 
