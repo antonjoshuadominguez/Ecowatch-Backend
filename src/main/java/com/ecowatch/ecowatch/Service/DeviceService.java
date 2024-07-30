@@ -1,10 +1,14 @@
 package com.ecowatch.ecowatch.Service;
 
+import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -62,16 +66,24 @@ public class DeviceService {
         List<Object> response = new ArrayList<>();
         boolean typeIsNull = (type == null) ? true : false;
         if(typeIsNull || type.equals(DeviceType.Water)) {
-            List<WaterEntity> waterDevices = waterRepo.findAll();
+            List<WaterEntity> waterDevices = waterRepo.findByOrderByDevice_DeviceName();
             response.addAll(waterDevices);
         }
-        if(typeIsNull ||type.equals(DeviceType.Electric)) {
-            List<ElectricEntity> electricDevices = electricRepo.findAll();
+        if(typeIsNull || type.equals(DeviceType.Electric)) {
+            List<ElectricEntity> electricDevices = electricRepo.findByOrderByDevice_DeviceName();
             response.addAll(electricDevices);
         }
         if(response.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No device found");
         }
+        Collections.sort(response, new Comparator<Object>() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                String name1 = getDeviceName(o1);
+                String name2 = getDeviceName(o2);
+                return name1.compareToIgnoreCase(name2);
+            }
+        });
         return ResponseEntity.ok(response);
     }
 
@@ -138,5 +150,77 @@ public class DeviceService {
         DeviceEntity device = deviceRepo.findById(deviceId).get();
         deviceRepo.delete(device);
         return ResponseEntity.ok("Successfully deleted: \n" + device.toString());
+    }
+
+    public ResponseEntity<?> filteredDevices(DeviceType type, Date FromDate, Date ToDate) {
+        List<Object> response = new ArrayList<>();
+        if(type == null || type.equals(DeviceType.Electric)) {
+            List<ElectricEntity> electricDevices = electricRepo.findByOrderByDevice_InstallationDate();
+            for (ElectricEntity electricEntity : electricDevices) {
+                if(isWithinDateRange(electricEntity.getDevice().getInstallationDate(), FromDate, ToDate)) {
+                    response.add(electricEntity);
+                }
+            }
+        } 
+        if(type == null || type.equals(DeviceType.Water)) {
+            List<WaterEntity> waterDevices = waterRepo.findByOrderByDevice_InstallationDate();
+            for (WaterEntity waterEntity : waterDevices) {
+                if(isWithinDateRange(waterEntity.getDevice().getInstallationDate(), FromDate, ToDate)) {
+                    response.add(waterEntity);
+                }
+            }
+        }
+        if(response.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No device found");
+        }
+        
+        Collections.sort(response, new Comparator<Object>() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                String name1 = getDeviceName(o1);
+                String name2 = getDeviceName(o2);
+                return name1.compareToIgnoreCase(name2);
+            }
+        });
+        
+        return ResponseEntity.ok(response);
+    }
+
+    
+    private String getDeviceName(Object device) {
+        if (device instanceof ElectricEntity) {
+            return ((ElectricEntity) device).getDevice().getDeviceName();
+        } else if (device instanceof WaterEntity) {
+            return ((WaterEntity) device).getDevice().getDeviceName();
+        } else {
+            return "";
+        }
+    }
+
+    private boolean isWithinDateRange(Date current, Date FromDate, Date ToDate) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(current);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        current = cal.getTime();
+        if(FromDate == null && ToDate == null) {
+            return true;
+        } else if(FromDate != null && ToDate != null) {
+            if((current.equals(FromDate) || current.equals(ToDate)) || 
+                (current.after(FromDate) && current.before(ToDate))) {
+                    return true;
+                }
+        } else if(FromDate == null) {
+            if(current.before(ToDate) || current.equals(ToDate)) {
+                return true;
+            }
+        } else if(ToDate == null) {
+            if(current.after(FromDate) || current.equals(ToDate)) {
+                return true;
+            }
+        } 
+        return false;
     }
 }

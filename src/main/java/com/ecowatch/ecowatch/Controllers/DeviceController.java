@@ -1,8 +1,13 @@
 package com.ecowatch.ecowatch.Controllers;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.convert.Jsr310Converters.LocalDateTimeToDateConverter;
+import org.springframework.data.convert.Jsr310Converters.LocalDateToDateConverter;
+import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters.LocalDateConverter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -87,5 +92,14 @@ public class DeviceController {
     @DeleteMapping("/delete/{deviceId}")
     public ResponseEntity<String> deleteDevice(@RequestParam(required = true) Long deviceId) {
         return deviceService.deleteDevice(deviceId);
+    }
+
+    @Operation(summary = "Filter devices by type and installation date")
+    @GetMapping("/filter")
+    public ResponseEntity<?> filterDevices(@RequestParam(required = false) DeviceType type, 
+        @RequestParam(required = false) LocalDate fromDate, @RequestParam(required = false) LocalDate toDate) {
+            Date from = (fromDate != null) ? LocalDateToDateConverter.INSTANCE.convert(fromDate) : null;
+            Date to = (toDate != null) ? LocalDateToDateConverter.INSTANCE.convert(toDate) : null;
+        return deviceService.filteredDevices(type, from, to);
     }
 }
